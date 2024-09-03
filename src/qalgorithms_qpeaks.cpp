@@ -761,6 +761,9 @@ namespace q
       */
       const float mse = calcSSE(-scale, scale, coeff, ylog_start + i) / (df_sum - 4); // mean squared error
 
+      //asert check if mse is nan or inf
+      assert(!std::isnan(mse) && !std::isinf(mse));
+
       if (!isValidQuadraticTerm(coeff, inverseMatrix_2_2, mse, df_sum))
       {
         return false; // statistical insignificance of the quadratic term

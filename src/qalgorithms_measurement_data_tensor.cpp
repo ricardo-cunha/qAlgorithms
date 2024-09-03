@@ -31,7 +31,7 @@ namespace q
             sc::MZML &data,
             const int index)
         {
-            std::vector<std::vector<double>> spectrum = data.get_spectrum(index); // get spectrum at index
+            std::vector<std::vector<double>> spectrum = data.get_spectrum(index); // get spectrum at index @todo will be update using .binary_data
             std::vector<TensorData::dataPoint> dataPoints;                        // create vector of data points
             dataPoints.reserve(spectrum[0].size());                               // reserve memory for data points
             for (size_t i = 0; i < spectrum[0].size(); ++i)
@@ -125,7 +125,7 @@ namespace q
         std::vector<std::vector<std::unique_ptr<DataType::Peak>>>
         TensorData::findCentroids_MZML(
             q::Algorithms::qPeaks &qpeaks,
-            sc::MZML &data,
+            sc::MZML &data, // @todo will be changed to more universial class to treat mzml and mzxml
             const bool ms1only,
             const std::string polarity,
             const int start_index)
@@ -137,7 +137,7 @@ namespace q
             std::vector<int> num_datapoints = data.get_spectra_array_length();        // get number of data points
             double expectedDifference = 0.0;                                          // expected difference between two consecutive x-axis values
 
-            // FILTER MS1 SPECTRA
+            // FILTER MS1 SPECTRA // @todo there will be an addtional filter to get rid of the internal qa measurements.
             if (ms1only)
             {
                 indices.erase(std::remove_if(indices.begin(), indices.end(), [&ms_levels](int i)
@@ -155,7 +155,7 @@ namespace q
             if (num_centroided_spectra > spectrum_mode.size() * .5) // in profile mode sometimes centroided spectra appear as well
             {
                 std::vector<double> retention_times = data.get_spectra_rt(indices); // get retention times
-                rt_diff = calcRTDiff(retention_times);
+                rt_diff = calcRTDiff(retention_times); // @todo this should be a vector to treat dynamic dda
                 return transfereCentroids(data, indices, retention_times, start_index);
             }
 
@@ -175,7 +175,7 @@ namespace q
 
             // CALCULATE EXPECTED DIFFERENCE & CHECK FOR ZEROS
             {
-                std::vector<std::vector<double>> data_vec = data.get_spectrum(indices[start_index]); // get first spectrum (x-axis)
+                std::vector<std::vector<double>> data_vec = data.get_spectrum(indices[start_index]); // get first spectrum (x-axis) // @todo will be updated using the new function of sc (.binary_data)
                 expectedDifference = calcExpectedDiff(data_vec[0]);                                  // calculate expected difference & check if Orbitrap
             }
 
